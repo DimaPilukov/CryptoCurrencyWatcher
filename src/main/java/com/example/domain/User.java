@@ -15,14 +15,11 @@ public class User {
     @Column(name = "id", nullable = false)
     private Long id;
     private String username;
-    private String symbol;
-    private double fixedPrice;
+    private String password;
 
-    private boolean isDone;
 
-    public User(String username, String symbol, double fixedPrice) {
+    public User(String username, String password) {
         this.username = username;
-        this.symbol = symbol;
-        this.fixedPrice = fixedPrice;
+        this.password = password;
     }
 }

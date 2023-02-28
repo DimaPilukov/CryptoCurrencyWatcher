@@ -37,33 +37,33 @@ public class CryptoService {
     }
 
     //    @PostConstruct
-    @Scheduled(cron = "* * * * * *")
-    public void updateAndNotify() {
-
-        ResponseEntity<Tickers> response = json.getForEntity(COIN_LORE_URL, Tickers.class);
-        currencyRepository.saveAll(response.getBody().getData());
-
-        for (User notification : userRepository.findAll()) {
-            double fixedPrice = notification.getFixedPrice();
-            double currentPrice = findBySymbol(notification.getSymbol()).getPrice();
-            double difference = Math.abs((fixedPrice - currentPrice) / fixedPrice) * 100;
-            if (difference >= 1) {
-
-                log.warn(String.format("Username: %s, symbol: %s, percentage change %f%%",
-                        notification.getUsername(), notification.getSymbol(), difference));
-
-                notification.setDone(true);
-                notification.setFixedPrice(currentPrice);
-                userRepository.save(notification);
-            }
-        }
-    }
+//    @Scheduled(cron = "* * * * * *")
+//    public void updateAndNotify() {
+//
+//        ResponseEntity<Tickers> response = json.getForEntity(COIN_LORE_URL, Tickers.class);
+//        currencyRepository.saveAll(response.getBody().getData());
+//
+//        for (User notification : userRepository.findAll()) {
+//            double fixedPrice = notification.getFixedPrice();
+//            double currentPrice = findBySymbol(notification.getSymbol()).getPrice();
+//            double difference = Math.abs((fixedPrice - currentPrice) / fixedPrice) * 100;
+//            if (difference >= 1) {
+//
+//                log.warn(String.format("Username: %s, symbol: %s, percentage change %f%%",
+//                        notification.getUsername(), notification.getSymbol(), difference));
+//
+//                notification.setDone(true);
+//                notification.setFixedPrice(currentPrice);
+//                userRepository.save(notification);
+//            }
+//        }
+//    }
 
     public Currency findBySymbol(String symbol) {
         return currencyRepository.findBySymbol(symbol.toUpperCase());
     }
 
-    public void notify(String username, String symbol) {
-        userRepository.save(new User(username, symbol, findBySymbol(symbol).getPrice()));
-    }
+//    public void notify(String username, String symbol) {
+//        userRepository.save(new User(username, symbol, findBySymbol(symbol).getPrice()));
+//    }
 }

@@ -21,5 +21,4 @@ public class ExceptionController {
         ApiResponse apiResponse = ApiResponse.createApiResponse(message, httpStatus.value());
         return ResponseEntity.status(httpStatus).body(apiResponse);
     }
-
 }

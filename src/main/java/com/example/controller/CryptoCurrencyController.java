@@ -37,9 +37,9 @@ public class CryptoCurrencyController {
         return ResponseEntity.ok(currency);
     }
 
-    @GetMapping(value = "/{username}/{symbol}")
-    public void notify(@PathVariable String username,
-                       @PathVariable String symbol) {
-        cryptoService.notify(username, symbol);
-    }
+//    @GetMapping(value = "/{username}/{symbol}")
+//    public void notify(@PathVariable String username,
+//                       @PathVariable String symbol) {
+//        cryptoService.notify(username, symbol);
+//    }
 }
