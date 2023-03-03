@@ -1,69 +1,97 @@
 package com.example.service;
 
-import com.example.domain.Currency;
-import com.example.domain.Tickers;
+import com.example.domain.CryptoCurrency;
+import com.example.domain.Price;
+
 import com.example.domain.User;
-import com.example.repo.CurrencyRepository;
-import com.example.repo.UserRepository;
-import lombok.Value;
+import com.example.domain.UserCryptoCurrency;
+import com.example.repository.CryptoCurrencyRepository;
+import com.example.repository.UserCryptoCurrencyRepository;
+import com.example.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
 public class CryptoService {
 
-    private CurrencyRepository currencyRepository;
-    private UserRepository userRepository;
-    private Json json;
+    @Value("${coinlore.url}")
+    private String URL;
 
-    private static final String COIN_LORE_URL = "https://api.coinlore.net/api/tickers/";
+    private final CryptoCurrencyRepository cryptoCurrencyRepository;
+    private final UserCryptoCurrencyRepository userCryptoCurrencyRepository;
+    private final UserRepository userRepository;
+    private final Json json;
 
+    private final String urlBTC = "90";
+    private final String urlSOL = "80";
+    private final String urlETH = "48543";
 
-//    private static Logger log = Logger.getLogger(String.valueOf(CryptoService.class));
-
-
-    public CryptoService(CurrencyRepository currencyRepository,
+    public CryptoService(CryptoCurrencyRepository currencyRepository,
                          UserRepository userRepository,
+                         UserCryptoCurrencyRepository userCryptoCurrencyRepository,
                          Json json) {
-        this.currencyRepository = currencyRepository;
+        this.userCryptoCurrencyRepository = userCryptoCurrencyRepository;
+        this.cryptoCurrencyRepository = currencyRepository;
         this.userRepository = userRepository;
         this.json = json;
     }
 
-    //    @PostConstruct
-//    @Scheduled(cron = "* * * * * *")
-//    public void updateAndNotify() {
-//
-//        ResponseEntity<Tickers> response = json.getForEntity(COIN_LORE_URL, Tickers.class);
-//        currencyRepository.saveAll(response.getBody().getData());
-//
-//        for (User notification : userRepository.findAll()) {
-//            double fixedPrice = notification.getFixedPrice();
-//            double currentPrice = findBySymbol(notification.getSymbol()).getPrice();
-//            double difference = Math.abs((fixedPrice - currentPrice) / fixedPrice) * 100;
-//            if (difference >= 1) {
-//
-//                log.warn(String.format("Username: %s, symbol: %s, percentage change %f%%",
-//                        notification.getUsername(), notification.getSymbol(), difference));
-//
-//                notification.setDone(true);
-//                notification.setFixedPrice(currentPrice);
-//                userRepository.save(notification);
-//            }
-//        }
-//    }
-
-    public Currency findBySymbol(String symbol) {
-        return currencyRepository.findBySymbol(symbol.toUpperCase());
+    Price[] price;
+    public double getPRICE(String symbol) {
+        if (symbol.equals("BTH")){
+            price = json.getForObject(URL + urlBTC, Price[].class);
+            return price[0].getPrice();
+        } else if (symbol.equals("SOL")){
+            price = json.getForObject(URL + urlSOL, Price[].class);
+            return price[0].getPrice();
+        } else {
+            price = json.getForObject(URL + urlETH, Price[].class);
+            return price[0].getPrice();
+        }
     }
 
-//    public void notify(String username, String symbol) {
-//        userRepository.save(new User(username, symbol, findBySymbol(symbol).getPrice()));
-//    }
+    @Scheduled(cron = "* * * * * *")
+    public void updateAndNotify() {
+        if (cryptoCurrencyRepository.findAll().size() == 0) {
+            addData();
+        }
+        for (UserCryptoCurrency userCryptoCurrency : userCryptoCurrencyRepository.findAll()) {
+            double fixedPrice = userCryptoCurrency.getPriceCoinLore();
+            double currentPrice = price[0].getPrice();
+            double difference = Math.abs((fixedPrice - currentPrice) / fixedPrice) * 100;
+            if (difference >= 1) {
+                log.warn(String.format("Username: %s, symbol: %s, percentage change %f%%",
+                        userCryptoCurrency.getUser(), userCryptoCurrency.getCryptoCurrency(), difference));
+            }
+        }
+    }
+
+    private void addData() {
+        List<CryptoCurrency> data = new ArrayList<>();
+        data.add(new CryptoCurrency(90L, "BTC"));
+        data.add(new CryptoCurrency(80L, "ETH"));
+        data.add(new CryptoCurrency(48543L, "SOL"));
+        cryptoCurrencyRepository.saveAll(data);
+    }
 }
+
+//    public double getPRICE(String symbol) {
+//        if (symbol.equals("BTC")) {
+//            Price[] priceBTC = json.getForObject(URL + urlBTC, Price[].class);
+//            return priceCoinLoreBTC = priceBTC[0].getPrice();
+//
+//        } else if (symbol.equals("SOL")) {
+//            Price[] priceSOL = json.getForObject(URL + urlSOL, Price[].class);
+//            return priceCoinLoreSOL = priceSOL[0].getPrice();
+//
+//        } else {
+//            Price[] priceETH = json.getForObject(URL + urlETH, Price[].class);
+//            return priceCoinLoreETH = priceETH[0].getPrice();
+//        }
+//    }

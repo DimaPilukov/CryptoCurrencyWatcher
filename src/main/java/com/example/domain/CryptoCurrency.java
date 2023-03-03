@@ -1,25 +1,21 @@
 package com.example.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Currency {
+public class CryptoCurrency {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id", nullable = false)
     private Long id;
 
     @Column
     private String symbol;
-
-    @JsonProperty("price_usd")
-    private double price;
-
 }
