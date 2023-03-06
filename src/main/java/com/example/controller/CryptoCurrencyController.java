@@ -48,18 +48,33 @@ public class CryptoCurrencyController {
     @PostMapping
     public void notify(@RequestBody Dto dto) {
         UserCryptoCurrency userCryptoCurrency = new UserCryptoCurrency();
-        User user = new User();
-        user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword());
-        if (userRepository.existsByUsername(user.getUsername())) {
-            User userSQL = userRepository.findByUsername(user.getUsername());
-            if (userSQL.getPassword().equals(user.getPassword())) {
-                userCryptoCurrency.setUser(user);
+        if (userRepository.existsByUsername(dto.getUsername())) {
+            User userSQL = userRepository.findByUsername(dto.getUsername());
+            if (userSQL.getPassword().equals(dto.getPassword())) {
+                userCryptoCurrency.setUser(userRepository.findByUsername(dto.getUsername()));
                 userCryptoCurrency.setPriceCoinLore(cryptoService.getPRICE(dto.getSymbol()));
                 userCryptoCurrency.setCryptoCurrency(currencyRepository.findBySymbol(dto.getSymbol()));
                 userCryptoCurrencyRepository.save(userCryptoCurrency);
-
             }
         }
     }
+
+
+//    @PostMapping
+//    public void notify(@RequestBody Dto dto) {
+//        UserCryptoCurrency userCryptoCurrency = new UserCryptoCurrency();
+//        User user = new User();
+//        user.setUsername(dto.getUsername());
+//        user.setPassword(dto.getPassword());
+//        if (userRepository.existsByUsername(user.getUsername())) {
+//            User userSQL = userRepository.findByUsername(user.getUsername());
+//            if (userSQL.getPassword().equals(user.getPassword())) {
+//                userCryptoCurrency.setUser(user);
+//                userCryptoCurrency.setPriceCoinLore(cryptoService.getPRICE(dto.getSymbol()));
+//                userCryptoCurrency.setCryptoCurrency(currencyRepository.findBySymbol(dto.getSymbol()));
+//                userCryptoCurrencyRepository.save(userCryptoCurrency);
+//
+//            }
+//        }
+//    }
 }

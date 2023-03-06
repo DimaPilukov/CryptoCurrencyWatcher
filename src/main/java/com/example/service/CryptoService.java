@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -22,37 +23,32 @@ public class CryptoService {
 
     @Value("${coinlore.url}")
     private String URL;
-
     private final CryptoCurrencyRepository cryptoCurrencyRepository;
     private final UserCryptoCurrencyRepository userCryptoCurrencyRepository;
-    private final UserRepository userRepository;
     private final Json json;
 
-    private final String urlBTC = "90";
-    private final String urlSOL = "80";
-    private final String urlETH = "48543";
-
     public CryptoService(CryptoCurrencyRepository currencyRepository,
-                         UserRepository userRepository,
                          UserCryptoCurrencyRepository userCryptoCurrencyRepository,
                          Json json) {
         this.userCryptoCurrencyRepository = userCryptoCurrencyRepository;
         this.cryptoCurrencyRepository = currencyRepository;
-        this.userRepository = userRepository;
         this.json = json;
     }
 
     Price[] price;
     public double getPRICE(String symbol) {
         if (symbol.equals("BTH")){
+            String urlBTC = "90";
             price = json.getForObject(URL + urlBTC, Price[].class);
-            return price[0].getPrice();
+            return Objects.requireNonNull(price)[0].getPrice();
         } else if (symbol.equals("SOL")){
+            String urlSOL = "80";
             price = json.getForObject(URL + urlSOL, Price[].class);
-            return price[0].getPrice();
+            return Objects.requireNonNull(price)[0].getPrice();
         } else {
+            String urlETH = "48543";
             price = json.getForObject(URL + urlETH, Price[].class);
-            return price[0].getPrice();
+            return Objects.requireNonNull(price)[0].getPrice();
         }
     }
 
