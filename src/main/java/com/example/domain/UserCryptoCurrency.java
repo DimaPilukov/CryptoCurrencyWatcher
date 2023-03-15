@@ -16,8 +16,6 @@ public class UserCryptoCurrency {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private double priceCoinLore;
-
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -26,4 +24,5 @@ public class UserCryptoCurrency {
     @JoinColumn(name = "crypto_currency_id", referencedColumnName = "id")
     private CryptoCurrency cryptoCurrency;
 
+    private double priceCoinLore;
 }

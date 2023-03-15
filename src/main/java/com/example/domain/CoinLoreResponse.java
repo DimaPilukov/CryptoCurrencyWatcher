@@ -1,18 +1,15 @@
 package com.example.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.Getter;
 
 import javax.persistence.Id;
 
 @Getter
-public class Price {
-
+public class CoinLoreResponse {
     @Id
     @JsonProperty("id")
     private Long id;
-
     @JsonProperty("price_usd")
     private double price;
-
 }

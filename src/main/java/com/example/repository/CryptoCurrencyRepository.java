@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CryptoCurrencyRepository extends JpaRepository<CryptoCurrency, Long> {
 
-    public CryptoCurrency findBySymbol(String symbol);
+    CryptoCurrency findBySymbol(String symbol);
 
 }

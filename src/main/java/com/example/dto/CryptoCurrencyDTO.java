@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Dto {
+public class CryptoCurrencyDTO {
 
     private String username;
     private String password;
     private String symbol;
-    private Long id;
+    private Long currencyId;
 
 }

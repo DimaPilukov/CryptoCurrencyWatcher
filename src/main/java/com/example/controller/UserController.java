@@ -27,25 +27,4 @@ public class UserController {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-
-//    @GetMapping("/login/{username}")
-//    public ResponseEntity<User> registration(@PathVariable String username) {
-//        if (!userRepository.existsByUsername(username)) {
-//            User createdUser = new User(username);
-//            userRepository.save(createdUser);
-//            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-//        }
-//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//    }
-
-//    @PostMapping("/login")
-//    public ResponseEntity<User> reg(@RequestParam String username,
-//                                    @RequestParam String password){
-//        if (!userRepository.existsByUsername(username)) {
-//            User createdUser = new User(username, password);
-//            userRepository.save(createdUser);
-//            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-//        }
-//        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//    }
 }

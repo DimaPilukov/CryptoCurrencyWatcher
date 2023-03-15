@@ -11,11 +11,8 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 public class CryptoCurrency {
-
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
-
-    @Column
     private String symbol;
 }
