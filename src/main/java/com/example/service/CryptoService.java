@@ -10,9 +10,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -30,23 +29,32 @@ public class CryptoService {
         this.coinLoreClient = coinLoreClient;
     }
 
+
     @PostConstruct
     @Scheduled(cron = "0 * * * * *")
     public void updateAndNotify() {
-        List<UserCryptoCurrency> list = userCryptoCurrencyRepository.findAll();
-        if (list.size() == 0) {
+        List<UserCryptoCurrency> userCryptoCurrencyList = userCryptoCurrencyRepository.findAll();
+        if (userCryptoCurrencyList.size() == 0) {
             addData();
         }
-        for (UserCryptoCurrency item : list) {
-            double fixedPrice = item.getPriceCoinLore();
-            Optional<CoinLoreResponse> coinLoreResponse =
-                    coinLoreClient.getCurrentPrice(item.getCryptoCurrency().getId());
-            if (coinLoreResponse.isPresent()) {
-                double currentPrice = coinLoreResponse.get().getPrice();
-                double difference = Math.abs((fixedPrice - currentPrice) / fixedPrice) * 100;
-                if (difference >= 1) {
-                    log.warn(String.format("Username: %s, symbol: %s, percentage change %f%%",
-                            item.getUser(), item.getCryptoCurrency(), difference));
+        Set<Long> cryptoCurrencyId = userCryptoCurrencyList.stream()
+                .map(UserCryptoCurrency::getCryptoCurrency)
+                .map(CryptoCurrency::getId)
+                .collect(Collectors.toSet());
+        for (Long item : cryptoCurrencyId) {
+            List<UserCryptoCurrency> filterList = userCryptoCurrencyList.stream()
+                    .filter(userCryptoCurrency -> userCryptoCurrency.getCryptoCurrency().getId().equals(item))
+                    .collect(Collectors.toList());
+            for (UserCryptoCurrency item1 : filterList) {
+                Optional<CoinLoreResponse> price = coinLoreClient.getCurrentPrice(item1.getCryptoCurrency().getId());
+                if (price.isPresent()) {
+                    double currentPrice = price.get().getPrice();
+                    double fixedPrice = item1.getPriceCoinLore();
+                    double difference = Math.abs((fixedPrice - currentPrice) / fixedPrice) * 100;
+                    if (difference >= 1) {
+                        log.warn(String.format("Username: %s, symbol: %s, percentage change %f%%",
+                                item1.getUser(), item1.getCryptoCurrency(), difference));
+                    }
                 }
             }
         }
