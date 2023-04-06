@@ -1,7 +1,7 @@
 package com.example.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Id;
 

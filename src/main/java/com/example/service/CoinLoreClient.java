@@ -23,7 +23,6 @@ public class CoinLoreClient {
         if (coinLoreResponse == null) {
             return Optional.empty();
         }
-
         for (CoinLoreResponse item : coinLoreResponse) {
             if (Objects.equals(currencyId, item.getId())) {
                 return Optional.of(item);
